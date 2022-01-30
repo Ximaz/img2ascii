@@ -7,7 +7,7 @@ try:
 
 except OSError:
     import io
-    
+
     with io.open('README.md', encoding="utf-8") as f:
         long_description = f.read()
 
