@@ -23,7 +23,7 @@ def getAverageColor(image: Image) -> object:
     return np.average(im.reshape(w*h))
 
 
-def img2ascii(file: str, width: int = 70, scale: float = 0.43, moreLevels: bool = False) -> str:
+def img2ascii(file: str, width: int = 70, scale: float = 0.43, moreLevels: bool = False, reverseLight: bool = False) -> str:
 
     if width < 1:
         raise ValueError("Width must be greater than 0.")
@@ -45,6 +45,7 @@ def img2ascii(file: str, width: int = 70, scale: float = 0.43, moreLevels: bool 
         height = imgHeight
 
     asciiArray = [''] * height
+    reverse = 1 if not reverseLight else -1
 
     for j in range(height):
         y1, y2 = int(j*ratio), int((j+1)*ratio)
@@ -62,10 +63,10 @@ def img2ascii(file: str, width: int = 70, scale: float = 0.43, moreLevels: bool 
             avg = int(getAverageColor(img))
 
             if moreLevels:
-                gsval = complexGrayScale[((avg*len(complexGrayScale))-1)//255]
+                gsval = complexGrayScale[::reverse][((avg*len(complexGrayScale))-1)//255]
 
             else:
-                gsval = easyGrayScale[((avg*len(easyGrayScale))-1)//255]
+                gsval = easyGrayScale[::reverse][((avg*len(easyGrayScale))-1)//255]
 
             asciiArray[j] += gsval
 
