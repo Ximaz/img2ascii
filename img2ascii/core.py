@@ -27,7 +27,7 @@ def img2ascii(file: str, scale: float = 0.25, moreLevels: bool = False, reverseL
     image = Image.open(file).convert('L')
     width, height = image.size
 
-    image = image.resize((int(width * scale), int(height * scale)))
+    image = image.resize((int((width*2) * scale), int(height * scale)))
     width, height = image.size
 
     asciiArray = [''] * height
