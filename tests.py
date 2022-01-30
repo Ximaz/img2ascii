@@ -10,7 +10,7 @@ def main():
         usage()
         exit(1)
 
-    ascii = img2ascii(argv[1], width=215, reverseLight=1)
+    ascii = img2ascii(argv[1], reverseLight=1)
     with open("result.txt", "w+") as stream:
         stream.write(ascii)
     stream.close()
