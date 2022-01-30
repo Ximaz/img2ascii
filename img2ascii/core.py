@@ -11,11 +11,7 @@ complexGrayScale = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1\{\}[]?-_+~<>i
 easyGrayScale = '@%#*+=-:. '
 
 
-def getAverageColor(image: Image) -> object:
-    '''
-    Given PIL Image, return average value of grayscale color
-    '''
-
+def getAverageColor(image: Image) -> float:
     im = np.array(image)
 
     w, h = im.shape
@@ -36,9 +32,10 @@ def img2ascii(file: str, scale: float = 0.25, moreLevels: bool = False, reverseL
 
     asciiArray = [''] * height
     reverse = 1 if not reverseLight else -1
+    grayScale = (complexGrayScale if moreLevels else easyGrayScale)[::reverse]
 
     for j in range(height):
-        y1, y2 = int(j), int((j+1))
+        y1, y2 = j, (j+1)
 
         if j == height-1:
             y2 = height
@@ -52,11 +49,7 @@ def img2ascii(file: str, scale: float = 0.25, moreLevels: bool = False, reverseL
             img = image.crop((x1, y1, x2, y2))
             avg = int(getAverageColor(img))
 
-            if moreLevels:
-                gsval = complexGrayScale[::reverse][((avg*len(complexGrayScale))-1)//255]
-
-            else:
-                gsval = easyGrayScale[::reverse][((avg*len(easyGrayScale))-1)//255]
+            gsval = grayScale[((avg*len(grayScale))-1)//255]
 
             asciiArray[j] += gsval
 
