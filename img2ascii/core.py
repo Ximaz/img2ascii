@@ -30,15 +30,9 @@ def img2ascii(file: str, scale: float = 0.25, moreLevels: bool = False, reverseL
 
     image = Image.open(file).convert('L')
     width, height = image.size
-    print(width, height)
 
-    width = int(width * scale)
-    height = int(height * scale)
-    print(width, height)
-
-    image = image.resize((width, height))
+    image = image.resize((int(width * scale), int(height * scale)))
     width, height = image.size
-    print(width, height)
 
     asciiArray = [''] * height
     reverse = 1 if not reverseLight else -1
