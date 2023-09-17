@@ -1,56 +1,49 @@
 import numpy as np
-from PIL import Image
+import PIL.Image
 
-# gray scale level values from:
 # http://paulbourke.net/dataformats/asciiart/
 
-# 70 levels of gray
-complexGrayScale = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1\{\}[]?-_+~<>i!lI;:,"^`\'. '
+COMPLEX_GRAY_SCALE = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1\{\}[]?-_+~<>i!lI;:,"^`\'. '
 
-# 10 levels of gray
-easyGrayScale = '@%#*+=-:. '
+EASY_GRAY_SCALE = '@%#*+=-:. '
 
 
-def getAverageColor(image: Image) -> float:
-    im = np.array(image)
+def get_avg_color(image: PIL.Image.Image) -> int:
+    return int(np.average(np.array(image)))
 
-    w, h = im.shape
+def get_image(path: str) -> PIL.Image.Image:
+    return PIL.Image.open(path).convert('L')
 
-    return np.average(im.reshape(w*h))
+def get_gray_scale(detailed: bool = True, reverse_light: bool = False):
+    return (COMPLEX_GRAY_SCALE if detailed else EASY_GRAY_SCALE)[::(1 if not reverse_light else -1)]
 
+def img2ascii(image: PIL.Image.Image, scale: float = 1, detailed: bool = True, reverse_light: bool = False) -> str:
+    width, height = list(map(int, image.size[:2]))
+    width, height = int(width * 2 * scale), int(height * scale)
 
-def img2ascii(file: str, scale: float = 0.25, moreLevels: bool = False, reverseLight: bool = False) -> str:
+    image = image.resize((width, height))
 
-    if scale <= 0:
-        raise ValueError("Scale must be greater than 0.")
-
-    image = Image.open(file).convert('L')
-    width, height = image.size
-
-    image = image.resize((int((width*2) * scale), int(height * scale)))
-    width, height = image.size
-
-    asciiArray = [''] * height
-    reverse = 1 if not reverseLight else -1
-    grayScale = (complexGrayScale if moreLevels else easyGrayScale)[::reverse]
+    buffer = [''] * height
+    gray_scale = get_gray_scale(detailed=detailed, reverse_light=reverse_light)
+    gray_scale_length = len(gray_scale)
 
     for j in range(height):
         y1, y2 = j, (j+1)
 
-        if j == height-1:
+        if j == height - 1:
             y2 = height
 
         for i in range(width):
             x1, x2 = i, (i+1)
 
-            if i == width-1:
+            if i == width - 1:
                 x2 = width
 
             img = image.crop((x1, y1, x2, y2))
-            avg = int(getAverageColor(img))
+            avg = int(get_avg_color(img))
 
-            gsval = grayScale[((avg*len(grayScale))-1)//255]
+            gsval = gray_scale[(avg * gray_scale_length - 1) // 255]
 
-            asciiArray[j] += gsval
+            buffer[j] += gsval
 
-    return '\n'.join(asciiArray)
+    return '\n'.join(buffer)
