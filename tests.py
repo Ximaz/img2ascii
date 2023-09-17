@@ -1,20 +1,22 @@
-from sys import argv, exit
-from img2ascii import img2ascii
+import sys
+
+from img2ascii import *
 
 def usage():
     print("Usage :")
-    print("python3 " + argv[0] + " <FILENAME>")
+    print("python3 " + sys.argv[0] + " <FILENAME>")
 
 def main():
-    if len(argv) < 2:
+    if len(sys.argv) < 2:
         usage()
-        exit(1)
+        sys.exit(1)
 
-    ascii = img2ascii(argv[1])
+    image = get_image(path=sys.argv[1])
+    img_ascii = img2ascii(image=image, scale=0.5, detailed=True, reverse_light=True)
     with open("result.txt", "w+") as stream:
-        stream.write(ascii)
+        stream.write(img_ascii)
     stream.close()
-    exit(0)
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
